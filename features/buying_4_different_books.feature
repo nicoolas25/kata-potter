@@ -11,8 +11,8 @@ Feature: Buying four books
 
   Scenarios: Two different books
       | name1 | name2 | name3 | name4 | price |
-      | book1 | book2 | book1 | book2 |  31.2 |
-      | book3 | book3 | book4 | book4 |  31.2 |
+      | book1 | book2 | book1 | book2 |  30.4 |
+      | book3 | book3 | book4 | book4 |  30.4 |
 
   Scenarios: Three different books
       | name1 | name2 | name3 | name4 | price |

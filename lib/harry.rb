@@ -18,7 +18,7 @@ module Harry
       else
         groups << Set.new([book])
       end
-    end.tap { |o| puts o.inspect }
+    end
   end
 
   def best_discount_set(groups, book)
