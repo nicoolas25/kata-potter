@@ -17,5 +17,6 @@ Given /^I pick the following books with quantities$/ do |books_table|
 end
 
 Then /I pay (.*) \$/ do |price_str|
-  expect(Harry.price(@books)).to eq price_str.to_f
+  best_price = Harry::Cart.new(@books).best_price
+  expect(best_price).to eq price_str.to_f
 end

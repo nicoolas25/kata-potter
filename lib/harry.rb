@@ -1,50 +1,67 @@
 require 'set'
 
 module Harry
-  extend self
 
-  UNIT_PRICE = 8.00
+  class Cart
 
-  def price(books)
-    make_groups(books).reduce(0) do |total, set|
-      total + group_price(set)
+    def initialize(books)
+      @books = books
+      @groups = []
     end
-  end
 
-  def make_groups(books)
-    books.each_with_object([]) do |book, groups|
-      if set = best_discount_set(groups, book)
-        set << book
+    def best_price
+      groups.reduce(0){ |sum, group| sum + group.price }
+    end
+
+    private
+
+    def groups
+      @books.each { |book| insert(book) }
+      @groups
+    end
+
+    def insert(book)
+      if group = group_to_insert(book)
+        group << book
       else
-        groups << Set.new([book])
+        @groups << Group.new([book])
       end
     end
-  end
 
-  def best_discount_set(groups, book)
-    groups.
-      select { |set| !set.include?(book) }.
-      min_by { |set| discount_amount(set) }
-  end
-
-  def discount_amount(set)
-    group_price(set, offset: 1) - group_price(set)
-  end
-
-  def group_price(set, offset: 0)
-    size = set.size + offset
-    UNIT_PRICE * size * discount(size)
-  end
-
-  def discount(different_books)
-    case different_books
-    when 1 then 1.00
-    when 2 then 0.95
-    when 3 then 0.90
-    when 4 then 0.80
-    when 5 then 0.75
-    else raise "Too many different books: #{different_books}"
+    def group_to_insert(book)
+      @groups.
+        select { |group| !group.include?(book) }.
+        min_by { |group| step_difference(group) }
     end
+
+    def step_difference(group)
+      group.price(offset: 1) - group.price
+    end
+
+  end
+
+  class Group < Set
+
+    UNIT_PRICE = 8.00
+
+    def price(offset: 0)
+      size = self.size + offset
+      UNIT_PRICE * size * discount(offset: offset)
+    end
+
+    private
+
+    def discount(offset: 0)
+      case size + offset
+      when 1 then 1.00
+      when 2 then 0.95
+      when 3 then 0.90
+      when 4 then 0.80
+      when 5 then 0.75
+      else raise "Too many different books: #{different_books}"
+      end
+    end
+
   end
 
 end
